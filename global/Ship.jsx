@@ -9,7 +9,9 @@ Ship = React.createClass({
     return (
       <li>
         <span><label>Position:</label>{this.props.ship.pos}</span>
+        &nbsp;
         <span><label>Direction:</label>{this.props.ship.direction}</span>
+        &nbsp;
         <span><label>Length:</label>{this.props.ship.length}</span>
       </li>
     );

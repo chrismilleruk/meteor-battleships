@@ -4,84 +4,72 @@ BattleBoard = React.createClass({
     ships: React.PropTypes.object.isRequired
   },
 
-    hitTest(x, y, w = 1, h = 1) {
-      let test = { left:x, top:y, right:(x+w-1), bottom:(y+h-1) };
-      let ships = this.props.ships.filter((s) => {
-        let ship = {
-          left:s.x,
-          top:s.y,
-          right: (s.direction === "H") ? s.x+s.length-1 : s.x,
-          bottom: (s.direction === "V") ? s.y+s.length-1 : s.y,
-        };
-
-        return test.right >= ship.left
-          && test.left <= ship.right
-          && test.bottom >= ship.top
-          && test.top <= ship.bottom;
-      });
-      return ships[0];
-    },
-
-    getShipAtPos(row, col) {
-      let ships = this.props.ships.filter((ship) => {
-        if (ship.direction === "H" && ship.y === row) {
-          if (col >= ship.x && col < ship.x+ship.length) {
-            return true;
-          }
-        }
-        if (ship.direction === "V" && ship.x === col) {
-          if (row >= ship.y && row < ship.y+ship.length) {
-            return true;
-          }
-        }
-        return false;
-      });
-
-      if (ships.length > 1) {
-        return { _id:"X", x: col, y: row, direction: "X"}
-      }
-
-      return ships[0]; // could be undefined.
-    },
-
-    renderBoard() {
-      let w = 8, h = 8;
-      let xAxis = [1,2,3,4,5,6,7,8], yAxis = [1,2,3,4,5,6,7,8];
-      let instance = this;
-      let getShip = (x, y) => {
-        return instance.hitTest(x,y);
-        // let ships = instance.getShips().filter((ship) => {
-        //   return ship.x == x && ship.y == y;
-        // });
-        // return ships[0];
+  hitTest(x, y, w = 1, h = 1) {
+    let test = { left:x, top:y, right:(x+w-1), bottom:(y+h-1) };
+    let ships = this.props.ships.filter((s) => {
+      let ship = {
+        left:s.x,
+        top:s.y,
+        right: (s.direction === "H") ? s.x+s.length-1 : s.x,
+        bottom: (s.direction === "V") ? s.y+s.length-1 : s.y,
       };
 
-      return yAxis.map((y) => {
-        return <tr>{xAxis.map((x) => {
-          let key = x + ':' + y;
-          let ship = getShip(x, y);
-          if (!! ship) {
-            if (ship.x === x && ship.y === y) {
-              if (ship.direction === "H") {
-                return <td className="ship" colSpan={ship.length}>{ship._id}</td>
-              } else {
-                return <td className="ship" rowSpan={ship.length}>{ship._id}</td>
-              }
-            } else {
-              return '';
-            }
-          }
-          let cellClass = (x + y) % 2 === 0 ? "alt" : "";
-          return <td className={cellClass}>&nbsp;</td>;
-        })}</tr>;
-      });
-    },
+      return test.right >= ship.left
+        && test.left <= ship.right
+        && test.bottom >= ship.top
+        && test.top <= ship.bottom;
+    });
 
-    render() {
+    return ships[0];
+  },
+
+  renderBoard() {
+    let w = 8, h = 8;
+    let xAxis = [1,2,3,4,5,6,7,8], yAxis = [1,2,3,4,5,6,7,8];
+    let getShip = (x, y) => {
+      return this.hitTest(x,y);
+    }.bind(this);
+
+    return yAxis.map((y) => {
       return (
-        <table className="battle-arena">
-          {this.renderBoard()}
-        </table>
+        <tr>
+          {xAxis.map((x) => {
+            let ship = getShip(x, y);
+            if (!! ship) {
+              // If this isn't the top/left cell then don't render anything
+              // since this cell will be rendered by the colSpan/rowSpan.
+              if (ship.x !== x || ship.y !== y) {
+                return '';
+              }
+
+              let cellProps = {
+                className: "ship"
+              };
+
+              if (ship.direction === "H") {
+                cellProps.colSpan = ship.length;
+              } else {
+                cellProps.rowSpan = ship.length;
+              }
+
+              // Render a ship which spans several cells.
+              return <td {...cellProps}>{ship._id}</td>;
+            }
+
+            // Render a standard water cell.
+            let cellClass = (x + y) % 2 === 0 ? "alt" : "";
+            return <td className={cellClass}>&nbsp;</td>;
+          })}
+      </tr>
       );
-    }
+    });
+  },
+
+  render() {
+    return (
+      <table className="battle-arena">
+        {this.renderBoard()}
+      </table>
+    );
+  }
 });

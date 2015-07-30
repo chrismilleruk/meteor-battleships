@@ -56,7 +56,7 @@ BattleBoard = React.createClass({
               return <td {...cellProps}>{ship._id}</td>;
             }
 
-            // Render a standard water cell.
+            // Render a standard water cell with alternating colours.
             let cellClass = (x + y) % 2 === 0 ? "alt" : "";
             return <td className={cellClass}>&nbsp;</td>;
           })}

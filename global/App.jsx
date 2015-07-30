@@ -11,7 +11,7 @@ App = React.createClass({
   renderShips() {
     return this.getShips().map((ship) => {
       return <Ship key={ship._id} ship={ship} />
-    })
+    }.bind(this))
   },
 
   render() {
@@ -23,7 +23,7 @@ App = React.createClass({
         <ul>
           {this.renderShips()}
         </ul>
-        <BattleBoard ships={this.getShips()} />
+        <BattleBoard2 ships={this.getShips()} />
       </div>
     );
   }

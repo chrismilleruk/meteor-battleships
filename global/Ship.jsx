@@ -5,14 +5,24 @@ Ship = React.createClass({
     // We can use propTypes to indicate it is required
     ship: React.PropTypes.object.isRequired
   },
+
+  directionClick(event) {
+    console.log(arguments);
+  },
+
+  lengthClick(event) {
+    console.log(arguments);
+    
+  },
+
   render() {
     return (
       <li>
         <span><label>Position:</label>{this.props.ship.pos}</span>
         &nbsp;
-        <span><label>Direction:</label>{this.props.ship.direction}</span>
+        <span onClick={this.directionClick}><label>Direction:</label>{this.props.ship.direction}</span>
         &nbsp;
-        <span><label>Length:</label>{this.props.ship.length}</span>
+        <span onClick={this.lengthClick}><label>Length:</label>{this.props.ship.length}</span>
       </li>
     );
   }
